@@ -20,6 +20,8 @@ export function TimelineNotifier({ urgentProjects }: TimelineNotifierProps) {
       const today = startOfDay(new Date());
       
       urgentProjects.forEach(p => {
+        if (!p.deadline) return;
+        
         const days = differenceInDays(startOfDay(new Date(p.deadline)), today);
         let message = "";
         let isCritical = false;

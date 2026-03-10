@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,6 @@ import { Plus } from "lucide-react";
 import { createProject } from "@/server/actions/projects";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 
 export function ProjectDialog({ clients }: { clients: any[] }) {
   const [open, setOpen] = useState(false);
@@ -76,7 +75,7 @@ export function ProjectDialog({ clients }: { clients: any[] }) {
             
             <div className="grid gap-2">
               <Label htmlFor="paymentType">Payment Type</Label>
-              <Select name="paymentType" value={paymentType} onValueChange={setPaymentType}>
+              <Select name="paymentType" value={paymentType} onValueChange={(val) => val && setPaymentType(val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select payment type" />
                 </SelectTrigger>

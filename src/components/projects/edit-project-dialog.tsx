@@ -109,7 +109,7 @@ export function EditProjectDialog({ project, clients }: { project: any, clients:
             </div>
             <div className="grid gap-2">
               <Label htmlFor="paymentType">Payment Type</Label>
-              <Select name="paymentType" value={paymentType} onValueChange={setPaymentType}>
+              <Select name="paymentType" value={paymentType} onValueChange={(val) => val && setPaymentType(val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select payment type" />
                 </SelectTrigger>
