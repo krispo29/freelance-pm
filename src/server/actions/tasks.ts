@@ -19,6 +19,25 @@ export async function getTasksByProject(projectId: string) {
   }
 }
 
+export async function getUpcomingTasks(limit: number = 5) {
+  try {
+    return await db.query.tasks.findMany({
+      where: (tasks, { eq, and, isNotNull }) => and(
+        eq(tasks.status, "todo"),
+        isNotNull(tasks.dueDate)
+      ),
+      orderBy: [asc(tasks.dueDate)],
+      limit,
+      with: {
+        project: true
+      }
+    });
+  } catch (error) {
+    console.error("Failed to get upcoming tasks:", error);
+    throw new Error("Failed to fetch upcoming tasks");
+  }
+}
+
 export async function createTask(data: InsertTask) {
   try {
     const validatedData = insertTaskSchema.parse(data);

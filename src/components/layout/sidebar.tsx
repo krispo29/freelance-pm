@@ -5,20 +5,28 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, FolderKanban, Banknote, CalendarDays, Users, LogOut } from "lucide-react";
 import { useUIStore } from "@/store/ui-store";
-
-const navItems = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Projects", href: "/projects", icon: FolderKanban },
-  { name: "Income", href: "/income", icon: Banknote },
-  { name: "Timeline", href: "/timeline", icon: CalendarDays },
-  { name: "Clients", href: "/clients", icon: Users },
-];
-
+import { getTranslation } from "@/lib/translations";
 import { signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { sidebarOpen, setSidebarOpen } = useUIStore();
+  const { sidebarOpen, setSidebarOpen, language } = useUIStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const t = getTranslation(language);
+
+  const navItems = [
+    { name: t.common.dashboard, href: "/", icon: LayoutDashboard },
+    { name: t.common.projects, href: "/projects", icon: FolderKanban },
+    { name: t.common.income, href: "/income", icon: Banknote },
+    { name: t.common.timeline, href: "/timeline", icon: CalendarDays },
+    { name: t.common.clients, href: "/clients", icon: Users },
+  ];
 
   return (
     <>
@@ -76,7 +84,7 @@ export function Sidebar() {
             className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="h-5 w-5" />
-            Log out
+            {t.common.logout}
           </button>
         </div>
       </aside>

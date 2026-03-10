@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus } from "lucide-react";
 import { createProject } from "@/server/actions/projects";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 export function ProjectDialog({ clients }: { clients: any[] }) {
   const [open, setOpen] = useState(false);
@@ -40,11 +42,13 @@ export function ProjectDialog({ clients }: { clients: any[] }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> New Project
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <button className={cn(buttonVariants({ variant: "default" }))}>
+             <Plus className="mr-2 h-4 w-4" /> New Project
+          </button>
+        }
+      />
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>

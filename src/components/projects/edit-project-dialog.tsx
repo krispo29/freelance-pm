@@ -55,11 +55,16 @@ export function EditProjectDialog({ project, clients }: { project: any, clients:
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Settings className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <button 
+            type="button"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted hover:text-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
+        } 
+      />
       <DialogContent className="max-w-2xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader>

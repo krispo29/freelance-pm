@@ -4,6 +4,7 @@ import { useUIStore } from "@/store/ui-store";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageToggle } from "@/components/language-toggle";
 
 export function Topbar() {
   const { toggleSidebar } = useUIStore();
@@ -24,7 +25,8 @@ export function Topbar() {
         {/* Breadcrumbs or Page Title could go here */}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        <LanguageToggle />
         <ThemeToggle />
       </div>
     </header>

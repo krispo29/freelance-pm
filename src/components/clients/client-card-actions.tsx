@@ -43,11 +43,9 @@ export function ClientCardActions({ client }: ClientCardActionsProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0" disabled={isPending}>
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+        <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" disabled={isPending} />}>
+          <span className="sr-only">Open menu</span>
+          <MoreVertical className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
@@ -65,8 +63,8 @@ export function ClientCardActions({ client }: ClientCardActionsProps) {
         client={client} 
         open={isEditOpen} 
         onOpenChange={setIsEditOpen} 
-        // We render it controlled without a trigger here
-        trigger={<div className="hidden" />} 
+        // We render it controlled without a trigger here, passing a safe empty element
+        trigger={<span className="hidden" />} 
       />
     </>
   );

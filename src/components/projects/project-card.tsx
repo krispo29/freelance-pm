@@ -1,15 +1,29 @@
+"use client"
+
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ProjectStatusBadge } from "./project-status-badge";
 import { Progress } from "@/components/ui/progress";
 import { CalendarDays, CheckCircle2, CircleDashed, Banknote } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { useUIStore } from "@/store/ui-store";
+import { getTranslation } from "@/lib/translations";
+import { useEffect, useState } from "react";
 
 interface ProjectCardProps {
-  project: any; // Using any for now to avoid strict type errors with relations
+  project: any;
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
+  const { language } = useUIStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const t = getTranslation(language);
+
   // Calculate completed tasks
   const totalTasks = project.tasks?.length || 0;
   const completedTasks = project.tasks?.filter((t: any) => t.status === "done").length || 0;
@@ -20,6 +34,10 @@ export function ProjectCard({ project }: ProjectCardProps) {
   // Determine Price Display
   const hasMonthlyRate = project.paymentType === "monthly" && project.monthlyRate;
   const hasTotalPrice = project.paymentType !== "monthly" && project.totalPrice;
+
+  if (!mounted) {
+     return <Card className="h-full border-dashed opacity-50"><CardContent className="h-[200px]" /></Card>;
+  }
 
   return (
     <Link href={`/projects/${project.id}`} className="block transition-transform hover:-translate-y-1 h-full">
@@ -33,7 +51,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </div>
           <h3 className="font-semibold text-lg line-clamp-1">{project.name}</h3>
           <p className="text-sm text-muted-foreground line-clamp-1">
-            {project.client?.name || "No client"}
+            {project.client?.name || (language === "th" ? "ไม่มีชื่อลูกค้า" : "No client")}
           </p>
         </CardHeader>
         <CardContent className="p-4 pt-2 flex-1 flex flex-col">
@@ -42,14 +60,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
                <CalendarDays className="h-4 w-4 shrink-0" />
                <span className={isOverdue ? "text-destructive font-medium" : ""}>
                  {project.deadline ? (
-                    isOverdue ? `Overdue by ${formatDistanceToNow(new Date(project.deadline))}` : `Due in ${formatDistanceToNow(new Date(project.deadline))}`
-                 ) : "No deadline"}
+                    isOverdue 
+                      ? (language === "th" ? `เลยกำหนดมา ${formatDistanceToNow(new Date(project.deadline))}` : `Overdue by ${formatDistanceToNow(new Date(project.deadline))}`)
+                      : (language === "th" ? `เหลือเวลา ${formatDistanceToNow(new Date(project.deadline))}` : `Due in ${formatDistanceToNow(new Date(project.deadline))}`)
+                 ) : (language === "th" ? "ไม่มีกำหนดส่ง" : "No deadline")}
                </span>
              </div>
              {(hasMonthlyRate || hasTotalPrice) && (
                <div className="flex items-center gap-2 text-primary/80 font-medium">
                  <Banknote className="h-4 w-4 shrink-0" />
-                 {hasMonthlyRate ? `฿${Number(project.monthlyRate).toLocaleString()} / month` : `฿${Number(project.totalPrice).toLocaleString()}`}
+                 {hasMonthlyRate 
+                    ? `฿${Number(project.monthlyRate).toLocaleString()} / ${language === "th" ? "เดือน" : "month"}` 
+                    : `฿${Number(project.totalPrice).toLocaleString()}`}
                </div>
              )}
           </div>
@@ -58,7 +80,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
              <div className="flex justify-between text-xs font-medium">
                <span className="flex items-center gap-1">
                  <CheckCircle2 className="h-3 w-3 text-green-500" />
-                 {completedTasks}/{totalTasks} tasks
+                 {completedTasks}/{totalTasks} {language === "th" ? "งาน" : "tasks"}
                </span>
                <span>{progressPercent}%</span>
              </div>
