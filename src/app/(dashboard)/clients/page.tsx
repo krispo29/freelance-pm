@@ -1,8 +1,10 @@
 import { getClients } from "@/server/actions/clients";
-import { Button } from "@/components/ui/button";
+import { ClientDialog } from "@/components/clients/client-dialog";
+import { ClientCardActions } from "@/components/clients/client-card-actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Mail, Phone, Building2 } from "lucide-react";
+import { Mail, Phone, Building2 } from "lucide-react";
 import Link from "next/link";
+import { Client } from "@/lib/validations/client";
 
 export const dynamic = 'force-dynamic';
 
@@ -16,29 +18,28 @@ export default async function ClientsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
           <p className="text-muted-foreground">Manage your client contacts.</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Client
-        </Button>
+        <ClientDialog />
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {clients.length === 0 ? (
           <div className="col-span-full text-center p-12 border border-dashed rounded-lg bg-card">
             <p className="text-muted-foreground mb-4">No clients found.</p>
-            <Button variant="outline">
-              <Plus className="mr-2 h-4 w-4" /> Add your first client
-            </Button>
+            <ClientDialog />
           </div>
         ) : (
           clients.map((client) => (
             <Card key={client.id} className="flex flex-col">
-              <CardHeader>
-                <CardTitle>{client.name}</CardTitle>
-                <CardDescription className="flex items-center gap-1 mt-1">
-                   <Building2 className="h-3 w-3" /> {client.company || "Individual"}
-                </CardDescription>
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                <div>
+                  <CardTitle className="text-xl">{client.name}</CardTitle>
+                  <CardDescription className="flex items-center gap-1 mt-1.5">
+                     <Building2 className="h-3 w-3" /> {client.company || "Individual"}
+                  </CardDescription>
+                </div>
+                <ClientCardActions client={client as Client} />
               </CardHeader>
-              <CardContent className="flex-1 space-y-4">
+              <CardContent className="flex-1 space-y-4 pt-4">
                 <div className="space-y-2 text-sm">
                   {client.email && (
                     <div className="flex items-center gap-2 text-muted-foreground">

@@ -1,19 +1,29 @@
 import { getProjectById } from "@/server/actions/projects";
+import { getClients } from "@/server/actions/clients";
 import { notFound } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProjectStatusBadge } from "@/components/projects/project-status-badge";
 import { TaskList } from "@/components/tasks/task-list";
+import { TaskDialog } from "@/components/tasks/task-dialog";
 import { IncomeTable } from "@/components/income/income-table";
+import { IncomeDialog } from "@/components/income/income-dialog";
+import { QuickInvoiceButton } from "@/components/income/quick-invoice-button";
+import { MilestoneDialog } from "@/components/milestones/milestone-dialog";
+import { EditProjectDialog } from "@/components/projects/edit-project-dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CalendarDays, MoreHorizontal, User } from "lucide-react";
+import { ArrowLeft, CalendarDays, User, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const project = await getProjectById(id);
+  const [project, clients] = await Promise.all([
+    getProjectById(id),
+    getClients()
+  ]);
 
   if (!project) {
     notFound();
@@ -40,9 +50,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             )}
           </div>
           
-          <Button variant="outline" size="icon">
-             <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <EditProjectDialog project={project} clients={clients} />
         </div>
       </div>
 
@@ -67,10 +75,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
          </div>
          <div className="p-4 border rounded-lg bg-card flex flex-col gap-1">
             <span className="text-xs font-medium text-muted-foreground uppercase">
-              Total Value
+              {project.paymentType === "monthly" ? "Monthly Rate" : "Total Value"}
             </span>
             <span className="font-medium text-green-600 dark:text-green-500">
-               {project.totalPrice ? `฿${Number(project.totalPrice).toLocaleString()}` : "-"}
+               {project.paymentType === "monthly" 
+                  ? (project.monthlyRate ? `฿${Number(project.monthlyRate).toLocaleString()}/mo` : "-")
+                  : (project.totalPrice ? `฿${Number(project.totalPrice).toLocaleString()}` : "-")}
             </span>
          </div>
       </div>
@@ -91,28 +101,46 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <TabsContent value="tasks" className="m-0 focus-visible:outline-none">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Project Tasks</h2>
-              <Button size="sm">Add Task</Button>
+              <TaskDialog projectId={project.id} />
             </div>
             <TaskList tasks={project.tasks} />
           </TabsContent>
           <TabsContent value="income" className="m-0 focus-visible:outline-none">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Income & Invoices</h2>
-              <Button size="sm">Add Income</Button>
+              <div className="flex gap-2">
+                {project.paymentType === "monthly" && project.monthlyRate && (
+                  <QuickInvoiceButton projectId={project.id} monthlyRate={Number(project.monthlyRate)} />
+                )}
+                <IncomeDialog projects={[project]} defaultProjectId={project.id} />
+              </div>
             </div>
             <IncomeTable entries={project.incomeEntries} />
           </TabsContent>
           <TabsContent value="milestones" className="m-0 focus-visible:outline-none">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Project Milestones</h2>
-              <Button size="sm">Add Milestone</Button>
+              <MilestoneDialog projectId={project.id} />
             </div>
-            {project.milestones.length === 0 && (
+            {project.milestones.length === 0 ? (
               <div className="text-center p-8 border border-dashed rounded-lg bg-muted/20">
                 <p className="text-muted-foreground">No milestones yet.</p>
               </div>
+            ) : (
+              <div className="space-y-2">
+                {project.milestones.map((milestone: any) => (
+                  <div key={milestone.id} className="flex items-center gap-3 p-3 border rounded-lg bg-card">
+                    <CheckCircle2 className={`h-5 w-5 ${milestone.isDone ? "text-green-500" : "text-muted-foreground"}`} />
+                    <div className="flex-1">
+                      <p className={`font-medium ${milestone.isDone ? "line-through text-muted-foreground" : ""}`}>{milestone.title}</p>
+                    </div>
+                    {milestone.dueDate && (
+                      <Badge variant="secondary">Due {format(new Date(milestone.dueDate), "MMM d")}</Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
-            {/* TODO: Milestone List Component */}
           </TabsContent>
         </div>
       </Tabs>

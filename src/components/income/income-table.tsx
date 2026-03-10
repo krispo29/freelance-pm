@@ -39,16 +39,26 @@ export function IncomeTable({ entries, showProject = false }: IncomeTableProps) 
   };
 
   const handleDelete = (id: string, projectId: string) => {
-    if (confirm("Are you sure you want to delete this entry?")) {
-      startTransition(async () => {
-        const res = await deleteIncomeEntry(id, projectId);
-        if (res.success) {
-          toast.success("Entry deleted");
-        } else {
-          toast.error("Failed to delete entry");
+    toast("Confirm Deletion", {
+      description: "Are you sure you want to delete this entry?",
+      action: {
+        label: "Delete",
+        onClick: () => {
+          startTransition(async () => {
+            const res = await deleteIncomeEntry(id, projectId);
+            if (res.success) {
+              toast.success("Entry deleted");
+            } else {
+              toast.error("Failed to delete entry");
+            }
+          });
         }
-      });
-    }
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {}
+      }
+    });
   };
 
   return (

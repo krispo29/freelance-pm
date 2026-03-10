@@ -1,14 +1,18 @@
 import { getAllIncome, getIncomeStats } from "@/server/actions/income";
+import { getProjects } from "@/server/actions/projects";
 import { IncomeTable } from "@/components/income/income-table";
+import { IncomeDialog } from "@/components/income/income-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Banknote, Plus, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Banknote, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
 export default async function IncomePage() {
-  const incomeEntries = await getAllIncome();
-  const stats = await getIncomeStats();
+  const [incomeEntries, stats, projects] = await Promise.all([
+    getAllIncome(),
+    getIncomeStats(),
+    getProjects()
+  ]);
 
   return (
     <div className="space-y-6">
@@ -17,9 +21,7 @@ export default async function IncomePage() {
           <h1 className="text-3xl font-bold tracking-tight">Income</h1>
           <p className="text-muted-foreground">Track all your payments and invoices.</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Income
-        </Button>
+        <IncomeDialog projects={projects} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">

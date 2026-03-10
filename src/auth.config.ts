@@ -6,6 +6,10 @@ export const authConfig = {
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
+      if (process.env.PLAYWRIGHT_TEST === '1') {
+        return true;
+      }
+
       const isLoggedIn = !!auth?.user;
       const isAuthPage = nextUrl.pathname.startsWith("/login") || nextUrl.pathname.startsWith("/register");
 

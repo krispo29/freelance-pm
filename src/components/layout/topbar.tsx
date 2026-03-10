@@ -3,6 +3,7 @@
 import { useUIStore } from "@/store/ui-store";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Topbar() {
   const { toggleSidebar } = useUIStore();
@@ -24,7 +25,7 @@ export function Topbar() {
       </div>
 
       <div className="flex items-center gap-4">
-         {/* Top right actions */}
+        <ThemeToggle />
       </div>
     </header>
   );

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ProjectStatusBadge } from "./project-status-badge";
 import { Progress } from "@/components/ui/progress";
-import { CalendarDays, CheckCircle2, CircleDashed } from "lucide-react";
+import { CalendarDays, CheckCircle2, CircleDashed, Banknote } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 
@@ -17,8 +17,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
   const isOverdue = project.deadline && new Date(project.deadline) < new Date() && project.status !== "completed";
 
+  // Determine Price Display
+  const hasMonthlyRate = project.paymentType === "monthly" && project.monthlyRate;
+  const hasTotalPrice = project.paymentType !== "monthly" && project.totalPrice;
+
   return (
-    <Link href={`/projects/${project.id}`} className="block transition-transform hover:-translate-y-1">
+    <Link href={`/projects/${project.id}`} className="block transition-transform hover:-translate-y-1 h-full">
       <Card className="h-full flex flex-col hover:border-primary/50 transition-colors">
         <CardHeader className="p-4 pb-2">
           <div className="flex justify-between items-start mb-2">
@@ -32,14 +36,22 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {project.client?.name || "No client"}
           </p>
         </CardHeader>
-        <CardContent className="p-4 pt-2 flex-1">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-             <CalendarDays className="h-4 w-4" />
-             <span className={isOverdue ? "text-destructive font-medium" : ""}>
-               {project.deadline ? (
-                  isOverdue ? `Overdue by ${formatDistanceToNow(new Date(project.deadline))}` : `Due in ${formatDistanceToNow(new Date(project.deadline))}`
-               ) : "No deadline"}
-             </span>
+        <CardContent className="p-4 pt-2 flex-1 flex flex-col">
+          <div className="flex flex-col gap-2 text-sm text-muted-foreground mb-4">
+             <div className="flex items-center gap-2">
+               <CalendarDays className="h-4 w-4 shrink-0" />
+               <span className={isOverdue ? "text-destructive font-medium" : ""}>
+                 {project.deadline ? (
+                    isOverdue ? `Overdue by ${formatDistanceToNow(new Date(project.deadline))}` : `Due in ${formatDistanceToNow(new Date(project.deadline))}`
+                 ) : "No deadline"}
+               </span>
+             </div>
+             {(hasMonthlyRate || hasTotalPrice) && (
+               <div className="flex items-center gap-2 text-primary/80 font-medium">
+                 <Banknote className="h-4 w-4 shrink-0" />
+                 {hasMonthlyRate ? `฿${Number(project.monthlyRate).toLocaleString()} / month` : `฿${Number(project.totalPrice).toLocaleString()}`}
+               </div>
+             )}
           </div>
 
           <div className="space-y-1.5 mt-auto">

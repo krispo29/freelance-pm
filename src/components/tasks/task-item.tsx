@@ -35,16 +35,26 @@ export function TaskItem({ task }: TaskItemProps) {
   };
 
   const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this task?")) {
-      startTransition(async () => {
-        const res = await deleteTask(task.id, task.projectId);
-        if (res.success) {
-          toast.success("Task deleted");
-        } else {
-          toast.error("Failed to delete task");
+    toast("Confirm Deletion", {
+      description: "Are you sure you want to delete this task?",
+      action: {
+        label: "Delete",
+        onClick: () => {
+          startTransition(async () => {
+            const res = await deleteTask(task.id, task.projectId);
+            if (res.success) {
+              toast.success("Task deleted");
+            } else {
+              toast.error("Failed to delete task");
+            }
+          });
         }
-      });
-    }
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {}
+      }
+    });
   };
 
   return (
