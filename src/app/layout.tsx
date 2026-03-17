@@ -1,22 +1,31 @@
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_Thai } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const inter = Inter({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-geist",
 });
 
-const notoSansThai = Noto_Sans_Thai({
-  subsets: ["thai", "latin"],
-  variable: "--font-noto-sans-thai",
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
-  title: "Freelance PM",
-  description: "Project management for freelancers",
+  title: "Freelance PM | Sophisticated Project Management",
+  description: "A premium productivity tool for freelance project managers.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -26,13 +35,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${notoSansThai.variable} font-sans antialiased`}>
+      <body className={`${geist.variable} ${geistMono.variable} ${fraunces.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem={false}
           disableTransitionOnChange
         >
+          <div className="noise-overlay" />
           {children}
           <Toaster />
         </ThemeProvider>

@@ -63,8 +63,7 @@ export function ClientCardActions({ client }: ClientCardActionsProps) {
         client={client} 
         open={isEditOpen} 
         onOpenChange={setIsEditOpen} 
-        // We render it controlled without a trigger here, passing a safe empty element
-        trigger={<span className="hidden" />} 
+        trigger={null} 
       />
     </>
   );

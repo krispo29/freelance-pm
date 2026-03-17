@@ -11,10 +11,14 @@ import { updateProject } from "@/server/actions/projects";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
+import { EditProjectDialogProps } from "@/types";
+import { BlockEditor } from "@/components/ui/block-editor";
+
 export function EditProjectDialog({ project, clients }: { project: any, clients: any[] }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [paymentType, setPaymentType] = useState<string>(project?.paymentType || "one_time");
+  const [description, setDescription] = useState(project.description || "");
 
   // Helper to format Date to YYYY-MM-DD for native input date
   const formatDateForInput = (dateString?: string | Date | null) => {
@@ -32,7 +36,7 @@ export function EditProjectDialog({ project, clients }: { project: any, clients:
     
     const data = {
       name: formData.get("name") as string,
-      description: formData.get("description") as string,
+      description: description,
       status: formData.get("status") as any,
       clientId: formData.get("clientId") as string || undefined,
       paymentType: paymentType,
@@ -144,7 +148,7 @@ export function EditProjectDialog({ project, clients }: { project: any, clients:
 
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="description">Description</Label>
-              <Input id="description" name="description" defaultValue={project.description || ""} placeholder="Add a short description" />
+              <BlockEditor value={description} onChange={setDescription} placeholder="Add a project description..." />
             </div>
           </div>
           <DialogFooter>

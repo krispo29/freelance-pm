@@ -10,15 +10,19 @@ import { Plus } from "lucide-react";
 import { createTask } from "@/server/actions/tasks";
 import { toast } from "sonner";
 
+import { BlockEditor } from "@/components/ui/block-editor";
+
 export function TaskDialog({ projectId }: { projectId: string }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [description, setDescription] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = {
       title: formData.get("title") as string,
+      description: description,
       priority: formData.get("priority") as "low" | "medium" | "high",
       projectId,
     };
@@ -28,6 +32,7 @@ export function TaskDialog({ projectId }: { projectId: string }) {
       if (res.success) {
         toast.success("Task added");
         setOpen(false);
+        setDescription("");
       } else {
         toast.error(res.error || "Failed to add task");
       }
@@ -39,28 +44,35 @@ export function TaskDialog({ projectId }: { projectId: string }) {
       <DialogTrigger render={<Button size="sm" />}>
         <Plus className="mr-2 h-4 w-4" /> Add Task
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Add Task</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="title">Task Title *</Label>
-              <Input id="title" name="title" required />
+            <div className="grid md:grid-cols-2 gap-4">
+               <div className="grid gap-2">
+                 <Label htmlFor="title">Task Title *</Label>
+                 <Input id="title" name="title" required />
+               </div>
+               <div className="grid gap-2">
+                 <Label htmlFor="priority">Priority</Label>
+                 <Select name="priority" defaultValue="medium">
+                   <SelectTrigger>
+                     <SelectValue placeholder="Select priority" />
+                   </SelectTrigger>
+                   <SelectContent>
+                     <SelectItem value="low">Low</SelectItem>
+                     <SelectItem value="medium">Medium</SelectItem>
+                     <SelectItem value="high">High</SelectItem>
+                   </SelectContent>
+                 </Select>
+               </div>
             </div>
+
             <div className="grid gap-2">
-              <Label htmlFor="priority">Priority</Label>
-              <Select name="priority" defaultValue="medium">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="description">Description</Label>
+              <BlockEditor value={description} onChange={setDescription} placeholder="Add task details..." />
             </div>
           </div>
           <DialogFooter>

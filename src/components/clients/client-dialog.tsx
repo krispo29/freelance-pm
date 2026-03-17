@@ -12,7 +12,7 @@ import { Client } from "@/lib/validations/client";
 
 interface ClientDialogProps {
   client?: Client;
-  trigger?: React.ReactElement;
+  trigger?: React.ReactElement | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -55,13 +55,15 @@ export function ClientDialog({ client, trigger, open: controlledOpen, onOpenChan
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger 
-        render={trigger || (
-          <Button>
-            <Plus className="mr-2 h-4 w-4" /> Add Client
-          </Button>
-        )} 
-      />
+      {trigger !== null && (
+        <DialogTrigger 
+          render={trigger || (
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> Add Client
+            </Button>
+          )} 
+        />
+      )}
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>

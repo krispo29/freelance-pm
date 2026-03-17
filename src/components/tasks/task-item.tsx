@@ -20,6 +20,8 @@ const priorityColors = {
   high: "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900 dark:text-red-300",
 };
 
+import { BlockRenderer } from "@/components/ui/block-renderer";
+
 export function TaskItem({ task }: TaskItemProps) {
   const [isPending, startTransition] = useTransition();
   const isDone = task.status === "done";
@@ -59,48 +61,56 @@ export function TaskItem({ task }: TaskItemProps) {
 
   return (
     <div className={cn(
-      "group flex items-center gap-3 p-3 rounded-md border bg-card text-card-foreground transition-all",
+      "group flex flex-col gap-2 p-3 rounded-md border bg-card text-card-foreground transition-all",
       isDone && "opacity-60 bg-muted/50",
       isPending && "opacity-50 pointer-events-none"
     )}>
-      <Button variant="ghost" size="icon" className="h-6 w-6 cursor-grab text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-        <GripVertical className="h-4 w-4" />
-      </Button>
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" className="h-6 w-6 cursor-grab text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+          <GripVertical className="h-4 w-4" />
+        </Button>
 
-      <Checkbox 
-        checked={isDone} 
-        onCheckedChange={handleToggle}
-        className="h-5 w-5 rounded-[4px]"
-      />
-      
-      <div className="flex-1 min-w-0">
-        <p className={cn(
-          "text-sm font-medium leading-none mb-1",
-          isDone && "line-through text-muted-foreground"
-        )}>
-          {task.title}
-        </p>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Badge variant="secondary" className={cn("text-[10px] px-1.5 py-0 h-4 border-none font-normal", priorityColors[task.priority as keyof typeof priorityColors])}>
-            {task.priority}
-          </Badge>
-          {task.dueDate && (
-            <span className="flex items-center gap-1">
-              <CalendarDays className="h-3 w-3" />
-              {format(new Date(task.dueDate), "MMM d")}
-            </span>
-          )}
+        <Checkbox 
+          checked={isDone} 
+          onCheckedChange={handleToggle}
+          className="h-5 w-5 rounded-[4px]"
+        />
+        
+        <div className="flex-1 min-w-0">
+          <p className={cn(
+            "text-sm font-medium leading-none mb-1",
+            isDone && "line-through text-muted-foreground"
+          )}>
+            {task.title}
+          </p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Badge variant="secondary" className={cn("text-[10px] px-1.5 py-0 h-4 border-none font-normal", priorityColors[task.priority as keyof typeof priorityColors])}>
+              {task.priority}
+            </Badge>
+            {task.dueDate && (
+              <span className="flex items-center gap-1">
+                <CalendarDays className="h-3 w-3" />
+                {format(new Date(task.dueDate), "MMM d")}
+              </span>
+            )}
+          </div>
         </div>
+
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleDelete}
+          className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
 
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        onClick={handleDelete}
-        className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      {task.description && (
+        <div className="pl-12 pr-4 pb-1">
+          <BlockRenderer content={task.description} className="text-xs opacity-80" />
+        </div>
+      )}
     </div>
   );
 }
