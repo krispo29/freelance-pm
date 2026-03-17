@@ -11,7 +11,6 @@ import { updateProject } from "@/server/actions/projects";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
-import { EditProjectDialogProps } from "@/types";
 import { BlockEditor } from "@/components/ui/block-editor";
 
 export function EditProjectDialog({ project, clients }: { project: any, clients: any[] }) {

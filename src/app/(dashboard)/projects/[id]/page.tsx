@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { BlockRenderer } from "@/components/ui/block-renderer";
 import { GlassCard } from "@/components/ui/glass-card";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic';
 
